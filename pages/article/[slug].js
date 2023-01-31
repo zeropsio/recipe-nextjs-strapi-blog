@@ -7,14 +7,18 @@ import Seo from "../../components/seo"
 import { getStrapiMedia } from "../../lib/media"
 
 const Article = ({ article, categories }) => {
-  const imageUrl = getStrapiMedia(article.attributes.image)
+  const imageUrl = getStrapiMedia(article.attributes.cover)
 
   const seo = {
     metaTitle: article.attributes.title,
     metaDescription: article.attributes.description,
-    shareImage: article.attributes.image,
+    shareImage: article.attributes.cover,
     article: true,
   }
+
+  const text = article.attributes.blocks.find(
+    (block) => block.__component === "shared.rich-text"
+  )?.body
 
   return (
     <Layout categories={categories.data}>
@@ -30,20 +34,20 @@ const Article = ({ article, categories }) => {
       </div>
       <div className="uk-section">
         <div className="uk-container uk-container-small">
-          <ReactMarkdown
-            source={article.attributes.content}
-            escapeHtml={false}
-          />
+          <ReactMarkdown source={text} escapeHtml={false} />
           <hr className="uk-divider-small" />
           <div className="uk-grid-small uk-flex-left" data-uk-grid="true">
             <div>
-              {article.attributes.author.picture && (
-                <NextImage image={article.attributes.author.picture} />
+              {article.attributes.author.data.attributes.avatar && (
+                <NextImage
+                  image={article.attributes.author.data.attributes.avatar}
+                />
               )}
+              -------
             </div>
             <div className="uk-width-expand">
               <p className="uk-margin-remove-bottom">
-                By {article.attributes.author.name}
+                By {article.attributes.author.data.attributes.name}
               </p>
               <p className="uk-text-meta uk-margin-remove-top">
                 <Moment format="MMM Do YYYY">
@@ -59,7 +63,9 @@ const Article = ({ article, categories }) => {
 }
 
 export async function getStaticPaths() {
-  const articlesRes = await fetchAPI("/articles", { fields: ["slug"] })
+  const articlesRes = await fetchAPI("/articles", {
+    fields: ["slug"],
+  })
 
   return {
     paths: articlesRes.data.map((article) => ({
@@ -76,7 +82,12 @@ export async function getStaticProps({ params }) {
     filters: {
       slug: params.slug,
     },
-    populate: "*",
+    populate: {
+      author: { populate: "*" },
+      cover: { populate: "*" },
+      category: { populate: "*" },
+      blocks: { populate: "*" },
+    },
   })
   const categoriesRes = await fetchAPI("/categories")
 
