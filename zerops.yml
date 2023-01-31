@@ -7,3 +7,5 @@ app:
       - yarn run build
     deploy:
       - './'
+  run:
+    start: yarn run start
