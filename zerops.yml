@@ -7,5 +7,7 @@ app:
       - yarn run build
     deploy:
       - './'
+    cache:
+      - node_modules
   run:
     start: yarn run start
