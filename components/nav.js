@@ -9,7 +9,7 @@ const Nav = ({ categories }) => {
           <ul className="uk-navbar-nav">
             <li>
               <Link href="/">
-                <a>Strapi Blog</a>
+                Strapi Blog
               </Link>
             </li>
           </ul>
@@ -19,17 +19,17 @@ const Nav = ({ categories }) => {
             {categories.map((category) => {
               return (
                 <li key={category.id}>
-                  <Link href={`/category/${category.attributes.slug}`}>
-                    <a className="uk-link-reset">{category.attributes.name}</a>
+                  <Link href={`/category/${category.attributes.slug}`} className="uk-link-reset">
+                    {category.attributes.name}
                   </Link>
                 </li>
-              )
+              );
             })}
           </ul>
         </div>
       </nav>
     </div>
-  )
+  );
 }
 
 export default Nav
